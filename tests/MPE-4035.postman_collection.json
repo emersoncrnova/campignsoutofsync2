@@ -1,0 +1,156 @@
+{
+	"info": {
+		"_postman_id": "b3bbfea0-4393-4514-b008-9ba61f9733af",
+		"name": "MPE-4035",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create search query id",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"\r",
+							"const timeElapsed = Date.now();\r",
+							"const todayDate = new Date(timeElapsed);\r",
+							"const is30Minuteago = new Date( todayDate.getTime() - 1000 * 60 *30 );\r",
+							"\r",
+							"const endtime = todayDate.toISOString();\r",
+							"const startime = is30Minuteago.toISOString();\r",
+							"\r",
+							"\r",
+							"\r",
+							"pm.environment.set('startime',startime);\r",
+							"pm.environment.set('endtime',endtime);\r",
+							"\r",
+							"console.log(pm.environment.get('startime'));\r",
+							"console.log(pm.environment.get('endtime'));\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"  pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"pm.environment.set('rsid',jsonData.rsid.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "08ee3a56-2641-48ad-a754-1e2ff57168cb",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://saj.loggly.com/apiv2/search?q=\"Campaign targeting out of sync\"&from={{startime}}&until={{endtime}}",
+					"protocol": "https",
+					"host": [
+						"saj",
+						"loggly",
+						"com"
+					],
+					"path": [
+						"apiv2",
+						"search"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "\"Campaign targeting out of sync\""
+						},
+						{
+							"key": "size",
+							"value": "10",
+							"disabled": true
+						},
+						{
+							"key": "from",
+							"value": "{{startime}}"
+						},
+						{
+							"key": "until",
+							"value": "{{endtime}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check logs forthe last 30mins",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"  pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"No events are shown: Campaign targeting out of sync\", () => {\r",
+							"  pm.expect(jsonData.events.length).to.eql(0);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "08ee3a56-2641-48ad-a754-1e2ff57168cb",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://saj.loggly.com/apiv2/events?rsid={{rsid}}",
+					"protocol": "https",
+					"host": [
+						"saj",
+						"loggly",
+						"com"
+					],
+					"path": [
+						"apiv2",
+						"events"
+					],
+					"query": [
+						{
+							"key": "rsid",
+							"value": "{{rsid}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
