@@ -2,8 +2,8 @@
   "name": "newman-tests",
   "version": "1.0.0",
   "description": "tests slack notifications",
-  "scripts": {
-    "test-newman": "newman run tests/MPE-4035.postman_collection.json -e tests/hub-dev.postman_environment.json -r cli,htmlextra --reporter-htmlextra-export ./CampaignsOutofSync_Report.html --reporter-htmlextra-title "Check Campaign targeting out of sync""
+   "scripts": {
+    "test-newman": "newman run https://www.getpostman.com/collections/5ceacf9b4ba367c48a7e -e hub-dev.postman_environment.json -r cli,htmlextra --reporter-htmlextra-export ./CampaignsOutofSync_Report.html --reporter-htmlextra-title 'Check Campaign targeting out of sync'"
   },
    "directories": {
     "test": "tests"
